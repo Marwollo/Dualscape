@@ -56,8 +56,6 @@ namespace Dualscape.API
 
             services.AddSingleton<IGameStateRepository, GameStateRepository>();
 
-            services.AddSingleton<IAmazonDynamoDB>(Configuration.GetAWSOptions().CreateServiceClient<IAmazonDynamoDB>());
-
 
             services.AddSwaggerGen(c =>
             {

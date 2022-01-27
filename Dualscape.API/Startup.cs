@@ -50,8 +50,7 @@ namespace Dualscape.API
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .SetIsOriginAllowed(origin => true)
-                        .AllowAnyHeader()
-                        .AllowCredentials();
+                        .AllowAnyHeader();
                     });
             });
 

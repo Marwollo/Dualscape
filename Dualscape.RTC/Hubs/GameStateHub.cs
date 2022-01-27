@@ -10,9 +10,9 @@ namespace Dualscape.RTC.Hubs
 {
     public class GameStateHub : Hub
     {
-        public async void UpdatePosition(string buffer)
+        public async Task UpdateGameState(string delta)
         {
-            await Clients.All.SendAsync("up", buffer);
+            await Clients.All.SendAsync("GameStateUpdate", delta);
         }
     }
 }

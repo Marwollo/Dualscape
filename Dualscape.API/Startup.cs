@@ -54,7 +54,7 @@ namespace Dualscape.API
             });
 
             services.AddControllers();
-
+            services.AddSignalR();
             services.AddSingleton<IGameStateRepository, GameStateRepository>();
 
 
@@ -78,59 +78,12 @@ namespace Dualscape.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<GameStateHub>("/rtc");
             });
 
-            var wsOptions = new WebSocketOptions
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(120),
-            };
-            app.UseWebSockets(wsOptions);
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path == "/rtc")
-                {
-                    if (context.WebSockets.IsWebSocketRequest)
-                    {
-                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        await SocketHandler(context, webSocket);
-                        
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                     }
-                }
-            });
+            
         }
 
-        public async Task SocketHandler(HttpContext context, WebSocket webSocket)
-        {
-            websocketConnections.Add(webSocket);
-            byte[] buffer = new byte[1024 * 4];
-            WebSocketReceiveResult result = await webSocket
-                .ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
-
-            if (result != null)
-            {
-                while (!result.CloseStatus.HasValue)
-                {
-                    string msg = Encoding.UTF8.GetString(new ArraySegment<byte>(buffer, 0, result.Count));
-                    for (int i = 0; i < websocketConnections.Count; i++)
-                    {
-                        await websocketConnections[i]
-                        .SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(msg)),
-                        result.MessageType,
-                        result.EndOfMessage,
-                        System.Threading.CancellationToken.None);
-                        result = await websocketConnections[i]
-                            .ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
-                    }
-                    
-                }
-            }
-            /*await webSocket.CloseAsync(result.CloseStatus.Value, 
-                result.CloseStatusDescription, 
-                System.Threading.CancellationToken.None);*/
-        }
+       
     }
 }

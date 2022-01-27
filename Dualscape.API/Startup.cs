@@ -91,10 +91,9 @@ namespace Dualscape.API
                 {
                     if (context.WebSockets.IsWebSocketRequest)
                     {
-                        using (WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync())
-                        {
-                            await SocketHandler(context, webSocket);
-                        }
+                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        await SocketHandler(context, webSocket);
+                        
                     }
                     else
                     {

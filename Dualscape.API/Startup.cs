@@ -47,7 +47,7 @@ namespace Dualscape.API
                     builder =>
                     {
                         builder
-                        .WithOrigins("https://preview.construct.net/")
+                        .WithOrigins("https://preview.construct.net")
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                     });

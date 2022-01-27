@@ -11,11 +11,16 @@ namespace Dualscape.API.Controllers
     [Route("matchmaking")]
     public class Matchmaking : Controller
     {
-
+        [HttpGet("start")]
         public IActionResult Start()
         {
 
             return new OkObjectResult("Hello world!");
+        }
+        [HttpGet("nesto")]
+        public IActionResult Nesto()
+        {
+            return new OkObjectResult("Ovo je nesto");
         }
     }
 }

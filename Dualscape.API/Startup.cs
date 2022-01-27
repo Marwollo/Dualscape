@@ -74,6 +74,7 @@ namespace Dualscape.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dualscape.API v1"));
             }
             app.UseRouting();
+            app.UseCors("AllowAll");
             app.UseHttpsRedirection();
             app.UseEndpoints(endpoints =>
             {

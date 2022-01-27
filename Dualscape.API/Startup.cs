@@ -29,6 +29,7 @@ namespace Dualscape.API
 {
     public class Startup
     {
+        public List<WebSocket> websocketConnections = new List<WebSocket>();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -105,6 +106,7 @@ namespace Dualscape.API
 
         public async Task SocketHandler(HttpContext context, WebSocket webSocket)
         {
+            websocketConnections.Add(webSocket);
             byte[] buffer = new byte[1024 * 4];
             WebSocketReceiveResult result = await webSocket
                 .ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
@@ -114,18 +116,22 @@ namespace Dualscape.API
                 while (!result.CloseStatus.HasValue)
                 {
                     string msg = Encoding.UTF8.GetString(new ArraySegment<byte>(buffer, 0, result.Count));
-                    await webSocket
-                        .SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(msg)), 
-                        result.MessageType, 
-                        result.EndOfMessage, 
+                    for (int i = 0; i < websocketConnections.Count; i++)
+                    {
+                        await websocketConnections[i]
+                        .SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(msg)),
+                        result.MessageType,
+                        result.EndOfMessage,
                         System.Threading.CancellationToken.None);
-                    result = await webSocket
-                        .ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
+                        result = await websocketConnections[i]
+                            .ReceiveAsync(new ArraySegment<byte>(buffer), System.Threading.CancellationToken.None);
+                    }
+                    
                 }
             }
-            await webSocket.CloseAsync(result.CloseStatus.Value, 
+            /*await webSocket.CloseAsync(result.CloseStatus.Value, 
                 result.CloseStatusDescription, 
-                System.Threading.CancellationToken.None);
+                System.Threading.CancellationToken.None);*/
         }
     }
 }

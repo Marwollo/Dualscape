@@ -53,7 +53,6 @@ namespace Dualscape.API
                         .AllowCredentials();
                     });
             });
-            v
             services.AddControllers();
             services.AddSignalR();
             services.AddSingleton<IGameStateRepository, GameStateRepository>();

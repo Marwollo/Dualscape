@@ -49,10 +49,11 @@ namespace Dualscape.API
                         builder
                         .WithOrigins("https://preview.construct.net")
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                     });
             });
-
+            v
             services.AddControllers();
             services.AddSignalR();
             services.AddSingleton<IGameStateRepository, GameStateRepository>();

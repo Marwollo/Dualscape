@@ -22,5 +22,6 @@ namespace Dualscape.API.Controllers
         {
             return new OkObjectResult("Ovo je nesto");
         }
+
     }
 }

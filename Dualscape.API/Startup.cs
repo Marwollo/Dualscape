@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net.WebSockets;
 using System.Net;
 using System.Text;
+using Amazon.DynamoDBv2.DataModel;
 
 namespace Dualscape.API
 {
@@ -56,7 +57,9 @@ namespace Dualscape.API
             services.AddControllers();
             services.AddSignalR();
             services.AddSingleton<IGameStateRepository, GameStateRepository>();
-
+            services.AddSingleton<IAmazonDynamoDB>(Configuration.GetAWSOptions().CreateServiceClient<IAmazonDynamoDB>());
+            //services.AddTransient<IDynamoDBContext, DynamoDBContext>();
+            
 
             services.AddSwaggerGen(c =>
             {

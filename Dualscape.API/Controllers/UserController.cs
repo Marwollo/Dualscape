@@ -14,19 +14,22 @@ namespace Dualscape.API.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-
-        [Route("register")]
-        public IActionResult Register(UserBaseView User)
+        public UserController(IUserService userService)
         {
-        
-            return new OkObjectResult(_userService.Register(User));
+            _userService = userService;
         }
 
-        [Route("login")]
-        public IActionResult Login(UserBaseView User)
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterAsync(User User)
         {
+            await _userService.RegisterAsync(User);
+            return new OkObjectResult("User is registred");
+        }
 
-            return new OkObjectResult(_userService.Login(User));
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]UserLoginView User)
+        {
+            return new OkObjectResult(await _userService.LoginAsync(User));
         }
     }
 }

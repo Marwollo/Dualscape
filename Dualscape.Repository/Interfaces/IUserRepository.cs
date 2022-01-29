@@ -10,7 +10,7 @@ namespace Dualscape.Repository.Interfaces
 {
     public interface IUserRepository
     {
-        public Task<User> Register(UserBaseView User);
-        public Task<User> Login(UserBaseView User);
+        public Task RegisterAsync(User User);
+        public Task<string> LoginAsync(UserLoginView User);
     }
 }

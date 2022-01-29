@@ -57,6 +57,8 @@ namespace Dualscape.API
             services.AddControllers();
             services.AddSignalR();
             services.AddSingleton<IGameStateRepository, GameStateRepository>();
+            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IAmazonDynamoDB>(Configuration.GetAWSOptions().CreateServiceClient<IAmazonDynamoDB>());
             //services.AddTransient<IDynamoDBContext, DynamoDBContext>();
             

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dualscape.Domain.Models
+namespace Dualscape.Domain.Views
 {
-    public class User
+    public class UserLoginView
     {
-        public string UserId { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }

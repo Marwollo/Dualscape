@@ -24,26 +24,30 @@ namespace Dualscape.Repository.Classes
         {
             _dynamoDB = amazonDynamoDB;
         }
-        public async Task<User> Login(UserBaseView User)
+        public async Task<string> LoginAsync(UserLoginView User)
         {
-            Dictionary<string, AttributeValue> key = new Dictionary<string, AttributeValue>
-            {
-                { "email", new AttributeValue { S = User.Email } }
-            };
+            Table usersTable = Table.LoadTable(_dynamoDB, "dualscape-users");
 
-            GetItemRequest request = new GetItemRequest
-            {
-                TableName = "dualscape-users",
-                Key = key,
-            };
+            ScanFilter scanFilter = new ScanFilter();
+            scanFilter.AddCondition("email", ScanOperator.Equal, User.Email);
 
-            var result = await _dynamoDB.GetItemAsync(request);
-            //result.Item["password"];
-            Console.WriteLine(result);
-            throw new NotImplementedException();
+            Search search = usersTable.Scan(scanFilter);
+
+            Document? result = (await search.GetNextSetAsync()).FirstOrDefault();
+
+
+            if(result != null)
+            {
+                if(BCrypt.Verify(User.Password, result["password"]))
+                {
+                    return result["user-id"];
+                }
+                throw new Exception("Password is incorrect");
+            }
+                throw new Exception("User does not exist");
         }
 
-        public async Task<User> Register(UserBaseView User)
+        public async Task RegisterAsync(User User)
         {
             string hashedPass = BCrypt.HashPassword(User.Password);
 
@@ -64,11 +68,6 @@ namespace Dualscape.Repository.Classes
                     Item = attributes
                 };
                 await _dynamoDB.PutItemAsync(request);
-                return new User()
-                {
-                    Userid = Id,
-                    Email = User.Email,
-                };
             }
             else
             {
@@ -76,5 +75,23 @@ namespace Dualscape.Repository.Classes
             }
 
         }
+
+        public async Task<User> GetUserByEmail(string Email)
+        {
+            Dictionary<string, AttributeValue> key = new Dictionary<string, AttributeValue>
+            {
+                { "email", new AttributeValue { S = Email } }
+            };
+
+            GetItemRequest request = new GetItemRequest
+            {
+                TableName = "dualscape-users",
+                Key = key,
+            };
+
+            var result = await _dynamoDB.GetItemAsync(request);
+            return new User();
+        }
+
     }
 }
